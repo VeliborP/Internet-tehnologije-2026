@@ -59,8 +59,8 @@ i kroz promenljive okruženja, bez izmene fajla:
 
 ```bash
 export DB_URL="jdbc:mysql://localhost:3306/webshop?useUnicode=true&characterEncoding=UTF-8"
-export DB_USERNAME=webshop
-export DB_PASSWORD=webshop
+export DB_USERNAME=root
+export DB_PASSWORD=
 ```
 
 ### 3. Start aplikacije

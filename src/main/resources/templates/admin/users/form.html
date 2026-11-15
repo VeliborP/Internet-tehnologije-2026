@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.users.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="${userForm.id == null} ? #{admin.users.new} : #{admin.users.edit}">Korisnik</h1>
+    <div th:replace="~{fragments/layout :: adminNav('users')}"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" th:object="${userForm}" novalidate
+                  th:action="${userForm.id == null} ? @{/admin/users} : @{/admin/users/{id}(id=${userForm.id})}">
+                <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="error : ${#fields.globalErrors()}" th:text="${error}">Greška</div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="firstName" th:text="#{field.first.name}">Ime</label>
+                        <input class="form-control" id="firstName" type="text" th:field="*{firstName}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{firstName}">Greška</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="lastName" th:text="#{field.last.name}">Prezime</label>
+                        <input class="form-control" id="lastName" type="text" th:field="*{lastName}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{lastName}">Greška</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="username" th:text="#{field.username}">Korisničko ime</label>
+                        <input class="form-control" id="username" type="text" th:field="*{username}" th:errorclass="is-invalid"
+                               autocomplete="off">
+                        <div class="invalid-feedback" th:errors="*{username}">Greška</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="password" th:text="#{field.password}">Lozinka</label>
+                        <input class="form-control" id="password" type="password" name="password"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" autocomplete="new-password">
+                        <div class="invalid-feedback" th:errors="*{password}">Greška</div>
+                        <div class="form-text" th:unless="${userForm.id == null}" th:text="#{admin.users.password.hint}">
+                            Ostavite prazno da lozinka ostane nepromenjena.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="role" th:text="#{field.role}">Uloga</label>
+                        <select class="form-select" id="role" th:field="*{role}" th:errorclass="is-invalid">
+                            <option th:each="roleOption : ${roles}" th:value="${roleOption}"
+                                    th:text="#{${'role.' + roleOption}}">Uloga</option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{role}">Greška</div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" id="enabled" type="checkbox" th:field="*{enabled}">
+                            <label class="form-check-label" for="enabled" th:text="#{field.active.user}">Nalog je aktivan</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit" th:text="#{common.save}">Sačuvaj</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/users}" th:text="#{common.cancel}">Otkaži</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

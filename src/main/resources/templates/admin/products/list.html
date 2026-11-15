@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.products.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="#{admin.products.heading}">Proizvodi</h1>
+    <div th:replace="~{fragments/layout :: adminNav('products')}"></div>
+
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+        <form class="row g-2 flex-grow-1" method="get" th:action="@{/admin/products}">
+            <div class="col-sm-5 col-lg-4">
+                <input class="form-control" type="search" name="q" th:value="${q}"
+                       th:placeholder="#{admin.products.search}" th:aria-label="#{admin.products.search}">
+            </div>
+            <div class="col-sm-4 col-lg-3">
+                <select class="form-select" name="categoryId" th:aria-label="#{field.category}">
+                    <option value="" th:text="#{products.all.categories}">Sve kategorije</option>
+                    <option th:each="category : ${categories}" th:value="${category.id}"
+                            th:selected="${category.id == categoryId}" th:text="${category.name}">Kategorija</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-funnel"></i> <span th:text="#{common.filter}">Filtriraj</span>
+                </button>
+            </div>
+        </form>
+        <a class="btn btn-primary align-self-start" th:href="@{/admin/products/new}">
+            <i class="bi bi-plus-lg"></i> <span th:text="#{admin.products.new}">Novi proizvod</span>
+        </a>
+    </div>
+
+    <div class="card">
+        <p class="text-muted p-3 mb-0" th:if="${page.empty}" th:text="#{products.empty}">Nema proizvoda.</p>
+        <div class="table-responsive" th:unless="${page.empty}">
+            <table class="table table-hover align-middle mb-0 admin-table">
+                <thead>
+                <tr>
+                    <th scope="col"><span class="visually-hidden" th:text="#{field.image}">Slika</span></th>
+                    <th scope="col" th:text="#{product.code}">Šifra</th>
+                    <th scope="col" th:text="#{field.name}">Naziv</th>
+                    <th scope="col" th:text="#{field.category}">Kategorija</th>
+                    <th scope="col" class="text-end" th:text="#{field.price}">Cena</th>
+                    <th scope="col" class="text-end" th:text="#{field.stock}">Zalihe</th>
+                    <th scope="col" th:text="#{field.status}">Status</th>
+                    <th scope="col" class="text-end" th:text="#{common.actions}">Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${page.content}">
+                    <td><img class="admin-thumb" th:src="@{${item.imageUrl}}" alt=""></td>
+                    <td class="text-muted" th:text="${item.code}">ABC-001</td>
+                    <td>
+                        <span class="fw-semibold" th:text="${item.name}">Proizvod</span>
+                        <i class="bi bi-star-fill text-warning" th:if="${item.featured}" th:title="#{product.featured}"></i>
+                    </td>
+                    <td th:text="${item.categoryName}">Kategorija</td>
+                    <td class="text-end"><span th:replace="~{fragments/components :: price(${item.price})}"></span></td>
+                    <td class="text-end" th:classappend="${!item.inStock} ? 'text-danger fw-semibold'"
+                        th:text="${item.stockQuantity}">10</td>
+                    <td>
+                        <span class="badge" th:classappend="${item.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${item.active} ? #{common.active} : #{common.inactive}">Aktivan</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/products/{id}/edit(id=${item.id})}"
+                           th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                        <form class="d-inline" method="post" th:action="@{/admin/products/{id}/toggle(id=${item.id})}">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"
+                                    th:title="${item.active} ? #{common.deactivate} : #{common.activate}"
+                                    th:aria-label="${item.active} ? #{common.deactivate} : #{common.activate}">
+                                <i class="bi" th:classappend="${item.active} ? 'bi-eye-slash' : 'bi-eye'"></i>
+                            </button>
+                        </form>
+                        <form class="d-inline" method="post" th:action="@{/admin/products/{id}/delete(id=${item.id})}"
+                              th:data-confirm="#{admin.product.delete.confirm(${item.name})}">
+                            <button class="btn btn-sm btn-outline-danger" type="submit"
+                                    th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/components :: pagination(${page}, '/admin/products')}"></nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Knjige">
+  <rect width="400" height="300" fill="#f7ecdf"/>
+  <circle cx="60" cy="260" r="100" fill="#f1dcc3"/>
+  <g stroke="#14213d" stroke-width="6" stroke-linejoin="round">
+    <rect x="130" y="80" width="40" height="150" rx="4" fill="#e07a5f"/>
+    <rect x="172" y="100" width="34" height="130" rx="4" fill="#f4a259"/>
+    <rect x="208" y="70" width="44" height="160" rx="4" fill="#1d4e89"/>
+    <path d="M256 228l34-132 34 9-34 132z" fill="#81b29a"/>
+    <path d="M110 232h200" stroke-linecap="round"/>
+  </g>
+</svg>

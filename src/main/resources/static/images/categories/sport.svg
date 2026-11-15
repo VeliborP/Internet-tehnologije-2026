@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Sport">
+  <rect width="400" height="300" fill="#fbe9dc"/>
+  <circle cx="60" cy="50" r="90" fill="#f7d9c2"/>
+  <g stroke="#14213d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="200" cy="150" r="78" fill="#ffffff"/>
+    <path d="M200 112l36 26-14 42h-44l-14-42z" fill="#14213d"/>
+    <path d="M200 112v-40 M236 138l38-14 M222 180l24 34 M178 180l-24 34 M164 138l-38-14" fill="none"/>
+  </g>
+</svg>

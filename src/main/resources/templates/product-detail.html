@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head(${product.name})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <nav th:aria-label="#{breadcrumb.label}">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}" th:text="#{nav.home}">Početna</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/products}" th:text="#{nav.products}">Proizvodi</a></li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/products(categoryId=${product.categoryId})}" th:text="${product.categoryName}">Kategorija</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Proizvod</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4 g-lg-5">
+        <div class="col-md-6">
+            <div class="product-detail-image">
+                <img th:src="@{${product.imageUrl}}" th:alt="${product.name}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <a class="product-category" th:href="@{/products(categoryId=${product.categoryId})}"
+               th:text="${product.categoryName}">Kategorija</a>
+            <h1 class="h2 mt-1" th:text="${product.name}">Naziv proizvoda</h1>
+            <p class="text-muted small">
+                <span th:text="#{product.code}">Šifra</span>: <span th:text="${product.code}">ABC-001</span>
+            </p>
+
+            <p class="product-detail-price">
+                <span th:replace="~{fragments/components :: price(${product.price})}"></span>
+            </p>
+
+            <p class="mb-3">
+                <span class="badge text-bg-success" th:if="${product.inStock}">
+                    <i class="bi bi-check2-circle"></i>
+                    <span th:text="#{product.available(${product.stockQuantity})}">Na stanju: 10 kom.</span>
+                </span>
+                <span class="badge text-bg-danger" th:unless="${product.inStock}">
+                    <i class="bi bi-x-circle"></i> <span th:text="#{product.out.of.stock}">Nema na stanju</span>
+                </span>
+            </p>
+
+            <p class="product-description" th:text="${product.description}">Opis proizvoda.</p>
+
+            <div class="card buy-box" th:if="${product.inStock}">
+                <div class="card-body">
+                    <form class="row g-2 align-items-end" method="post" th:action="@{/cart/add}"
+                          sec:authorize="isAuthenticated()">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="col-4 col-sm-3">
+                            <label class="form-label" for="quantity" th:text="#{product.quantity}">Količina</label>
+                            <input class="form-control" id="quantity" type="number" name="quantity" value="1" min="1"
+                                   th:max="${product.stockQuantity}" required>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-primary btn-lg w-100" type="submit">
+                                <i class="bi bi-cart-plus"></i> <span th:text="#{product.add.to.cart}">Dodaj u korpu</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div sec:authorize="isAnonymous()">
+                        <p class="mb-2" th:text="#{product.login.hint}">Prijavite se da biste dodali proizvod u korpu.</p>
+                        <a class="btn btn-primary" th:href="@{/login}" th:text="#{nav.login}">Prijava</a>
+                        <a class="btn btn-outline-primary" th:href="@{/register}" th:text="#{nav.register}">Registracija</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{products.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <div class="row g-4">
+        <aside class="col-lg-3">
+            <div class="card filter-card">
+                <div class="card-body">
+                    <form method="get" th:action="@{/products}" class="mb-3">
+                        <input type="hidden" name="categoryId" th:if="${categoryId != null}" th:value="${categoryId}">
+                        <label class="form-label fw-semibold" for="search" th:text="#{products.search.label}">Pretraga</label>
+                        <div class="input-group">
+                            <input class="form-control" id="search" type="search" name="q" th:value="${q}"
+                                   th:placeholder="#{products.search.placeholder}">
+                            <button class="btn btn-primary" type="submit" th:aria-label="#{nav.search}">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <h2 class="h6 fw-semibold" th:text="#{products.categories}">Kategorije</h2>
+                    <div class="list-group list-group-flush category-list">
+                        <a class="list-group-item list-group-item-action"
+                           th:classappend="${categoryId == null} ? 'active'"
+                           th:href="@{/products(q=${q})}" th:text="#{products.all.categories}">Sve kategorije</a>
+                        <a class="list-group-item list-group-item-action" th:each="category : ${categories}"
+                           th:classappend="${category.id == categoryId} ? 'active'"
+                           th:href="@{/products(categoryId=${category.id}, q=${q})}"
+                           th:text="${category.name}">Kategorija</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="col-lg-9">
+            <div class="d-flex flex-wrap justify-content-between align-items-baseline mb-3">
+                <h1 class="h3 mb-0"
+                    th:text="${selectedCategory != null} ? ${selectedCategory.name} : #{products.heading}">Proizvodi</h1>
+                <span class="text-muted small" th:text="#{products.count(${page.totalElements})}">12 proizvoda</span>
+            </div>
+            <p class="text-muted" th:if="${selectedCategory != null and selectedCategory.description != null}"
+               th:text="${selectedCategory.description}">Opis kategorije.</p>
+            <p class="small" th:unless="${#strings.isEmpty(q)}">
+                <span th:text="#{products.search.results}">Rezultati pretrage za</span>
+                <strong th:text="${q}">pojam</strong>
+                &middot; <a th:href="@{/products(categoryId=${categoryId})}" th:text="#{products.search.clear}">Poništi pretragu</a>
+            </p>
+
+            <div class="empty-state" th:if="${page.empty}">
+                <i class="bi bi-search"></i>
+                <p th:text="#{products.empty}">Nema proizvoda koji odgovaraju zadatim kriterijumima.</p>
+                <a class="btn btn-outline-primary" th:href="@{/products}" th:text="#{products.show.all}">Prikaži sve proizvode</a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4" th:unless="${page.empty}">
+                <div class="col" th:each="item : ${page.content}">
+                    <div th:replace="~{fragments/components :: productCard(${item})}"></div>
+                </div>
+            </div>
+
+            <nav th:replace="~{fragments/components :: pagination(${page}, '/products')}"></nav>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

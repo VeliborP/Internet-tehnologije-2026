@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{error.4xx.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5 flex-grow-1">
+    <div class="empty-state">
+        <span class="error-code" th:text="${status}">400</span>
+        <h1 class="h3" th:text="#{error.4xx.heading}">Zahtev nije mogao biti obrađen</h1>
+        <p th:text="${errorDetail != null} ? ${errorDetail} : #{error.4xx.text}">Proverite unete podatke i pokušajte ponovo.</p>
+        <a class="btn btn-primary" th:href="@{/}" th:text="#{error.back.home}">Nazad na početnu</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

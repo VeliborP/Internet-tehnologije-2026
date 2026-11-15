@@ -1,0 +1,19 @@
+# Optional helper: starts a local MySQL instance for development.
+# Usage: docker compose up -d
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: webshop-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: webshop
+      MYSQL_USER: webshop
+      MYSQL_PASSWORD: webshop
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - webshop-mysql-data:/var/lib/mysql
+
+volumes:
+  webshop-mysql-data:

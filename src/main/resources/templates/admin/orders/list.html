@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.orders.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="#{admin.orders.heading}">Porudžbine</h1>
+    <div th:replace="~{fragments/layout :: adminNav('orders')}"></div>
+
+    <form class="row g-2 mb-3" method="get" th:action="@{/admin/orders}">
+        <input type="hidden" name="userId" th:if="${userId != null}" th:value="${userId}">
+        <div class="col-sm-6 col-lg-3">
+            <input class="form-control" type="search" name="q" th:value="${q}"
+                   th:placeholder="#{admin.orders.search.number}" th:aria-label="#{admin.orders.search.number}">
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <input class="form-control" type="search" name="username" th:value="${username}"
+                   th:placeholder="#{admin.orders.search.user}" th:aria-label="#{admin.orders.search.user}">
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <select class="form-select" name="status" th:aria-label="#{order.status}">
+                <option value="" th:text="#{admin.orders.all.statuses}">Svi statusi</option>
+                <option th:each="statusOption : ${statuses}" th:value="${statusOption}"
+                        th:selected="${statusOption == status}"
+                        th:text="#{${'order.status.' + statusOption}}">Status</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-primary" type="submit">
+                <i class="bi bi-funnel"></i> <span th:text="#{common.filter}">Filtriraj</span>
+            </button>
+            <a class="btn btn-link" th:href="@{/admin/orders}" th:text="#{common.reset}">Poništi</a>
+        </div>
+    </form>
+
+    <p class="small text-muted" th:if="${userId != null}" th:text="#{admin.orders.filtered.by.user}">
+        Prikazane su porudžbine izabranog korisnika.
+    </p>
+
+    <div class="card">
+        <p class="text-muted p-3 mb-0" th:if="${page.empty}" th:text="#{admin.orders.empty}">Nema porudžbina.</p>
+        <div class="table-responsive" th:unless="${page.empty}">
+            <table class="table table-hover align-middle mb-0 admin-table">
+                <thead>
+                <tr>
+                    <th scope="col" th:text="#{order.number}">Broj porudžbine</th>
+                    <th scope="col" th:text="#{order.customer}">Kupac</th>
+                    <th scope="col" th:text="#{order.date}">Datum</th>
+                    <th scope="col" th:text="#{order.status}">Status</th>
+                    <th scope="col" class="text-end" th:text="#{order.total}">Ukupan iznos</th>
+                    <th scope="col"><span class="visually-hidden" th:text="#{common.actions}">Akcije</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${page.content}">
+                    <td class="fw-semibold" th:text="${item.orderNumber}">ORD-1</td>
+                    <td>
+                        <span th:text="${item.customerName}">Ime Prezime</span>
+                        <div class="small text-muted" th:text="${item.username}">korisnik</div>
+                    </td>
+                    <td th:text="${#temporals.format(item.createdAt, 'dd.MM.yyyy. HH:mm')}">01.01.2026. 12:00</td>
+                    <td><span th:replace="~{fragments/components :: statusBadge(${item.status})}"></span></td>
+                    <td class="text-end"><span th:replace="~{fragments/components :: price(${item.totalAmount})}"></span></td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/orders/{id}(id=${item.id})}"
+                           th:text="#{common.details}">Detalji</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/components :: pagination(${page}, '/admin/orders')}"></nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

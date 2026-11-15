@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{orders.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-4" th:text="#{orders.heading}">Moje porudžbine</h1>
+
+    <div class="empty-state" th:if="${page.empty}">
+        <i class="bi bi-receipt"></i>
+        <p th:text="#{orders.empty}">Još uvek nemate porudžbina.</p>
+        <a class="btn btn-primary" th:href="@{/products}" th:text="#{cart.continue.shopping}">Nastavi kupovinu</a>
+    </div>
+
+    <div class="card" th:unless="${page.empty}">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                <tr>
+                    <th scope="col" th:text="#{order.number}">Broj porudžbine</th>
+                    <th scope="col" th:text="#{order.date}">Datum</th>
+                    <th scope="col" th:text="#{order.status}">Status</th>
+                    <th scope="col" class="text-end" th:text="#{order.total}">Ukupan iznos</th>
+                    <th scope="col"><span class="visually-hidden" th:text="#{common.actions}">Akcije</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${page.content}">
+                    <td class="fw-semibold" th:text="${order.orderNumber}">ORD-1</td>
+                    <td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy. HH:mm')}">01.01.2026. 12:00</td>
+                    <td><span th:replace="~{fragments/components :: statusBadge(${order.status})}"></span></td>
+                    <td class="text-end"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/orders/{id}(id=${order.id})}"
+                           th:text="#{common.details}">Detalji</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/components :: pagination(${page}, '/orders')}"></nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

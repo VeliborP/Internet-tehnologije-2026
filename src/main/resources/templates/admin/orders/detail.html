@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.orders.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3">
+        <span th:text="#{order.heading}">Porudžbina</span> <span th:text="${order.orderNumber}">ORD-1</span>
+    </h1>
+    <div th:replace="~{fragments/layout :: adminNav('orders')}"></div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col" th:text="#{product.code}">Šifra</th>
+                            <th scope="col" th:text="#{cart.column.product}">Proizvod</th>
+                            <th scope="col" class="text-end" th:text="#{cart.column.price}">Cena</th>
+                            <th scope="col" class="text-center" th:text="#{cart.column.quantity}">Količina</th>
+                            <th scope="col" class="text-end" th:text="#{cart.column.total}">Ukupno</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.items}">
+                            <td class="text-muted" th:text="${item.productCode}">ABC-001</td>
+                            <td th:text="${item.productName}">Proizvod</td>
+                            <td class="text-end"><span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span></td>
+                            <td class="text-center" th:text="${item.quantity}">1</td>
+                            <td class="text-end"><span th:replace="~{fragments/components :: price(${item.totalPrice})}"></span></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <th scope="row" colspan="4" class="text-end" th:text="#{order.total}">Ukupan iznos</th>
+                            <td class="text-end fw-bold fs-5">
+                                <span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <a class="btn btn-link ps-0 mt-3" th:href="@{/admin/orders}">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{admin.orders.back}">Nazad na porudžbine</span>
+            </a>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h2 class="h6 text-muted" th:text="#{order.customer}">Kupac</h2>
+                    <p class="mb-0 fw-semibold" th:text="${order.customerName}">Ime Prezime</p>
+                    <p class="mb-2 small text-muted" th:text="${order.username}">korisnik</p>
+                    <a class="small" th:href="@{/admin/orders(userId=${order.userId})}"
+                       th:text="#{admin.orders.user.all}">Sve porudžbine ovog kupca</a>
+                    <hr>
+                    <h2 class="h6 text-muted" th:text="#{order.date}">Datum</h2>
+                    <p class="mb-0" th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy. HH:mm')}">01.01.2026. 12:00</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h6 text-muted" th:text="#{order.status}">Status</h2>
+                    <p><span th:replace="~{fragments/components :: statusBadge(${order.status})}"></span></p>
+
+                    <p class="small text-muted mb-0" th:if="${order.status.final}" th:text="#{order.status.final.note}">
+                        Status ove porudžbine se više ne može menjati.
+                    </p>
+                    <form method="post" th:action="@{/admin/orders/{id}/status(id=${order.id})}"
+                          th:unless="${order.status.final}">
+                        <label class="form-label" for="status" th:text="#{admin.orders.change.status}">Promeni status</label>
+                        <select class="form-select mb-2" id="status" name="status">
+                            <option th:each="statusOption : ${statuses}" th:value="${statusOption}"
+                                    th:selected="${statusOption == order.status}"
+                                    th:text="#{${'order.status.' + statusOption}}">Status</option>
+                        </select>
+                        <p class="form-text" th:text="#{admin.orders.cancel.note}">Otkazivanje vraća količine na stanje.</p>
+                        <button class="btn btn-primary w-100" type="submit" th:text="#{common.save}">Sačuvaj</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

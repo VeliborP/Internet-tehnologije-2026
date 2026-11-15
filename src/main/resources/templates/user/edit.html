@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{profile.edit.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <a class="btn btn-link ps-0 mb-2" th:href="@{/profile}">
+        <i class="bi bi-arrow-left"></i> <span th:text="#{profile.heading}">Moj profil</span>
+    </a>
+    <h1 class="h3 mb-4" th:text="#{profile.edit.heading}">Izmena podataka</h1>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3" th:text="#{profile.basic.data}">Osnovni podaci</h2>
+                    <form method="post" th:action="@{/profile/edit}" th:object="${profileForm}" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="firstName" th:text="#{field.first.name}">Ime</label>
+                            <input class="form-control" id="firstName" type="text" th:field="*{firstName}"
+                                   th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{firstName}">Greška</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="lastName" th:text="#{field.last.name}">Prezime</label>
+                            <input class="form-control" id="lastName" type="text" th:field="*{lastName}"
+                                   th:errorclass="is-invalid">
+                            <div class="invalid-feedback" th:errors="*{lastName}">Greška</div>
+                        </div>
+                        <button class="btn btn-primary" type="submit" th:text="#{common.save}">Sačuvaj</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3" th:text="#{profile.password.change}">Promena lozinke</h2>
+                    <form method="post" th:action="@{/profile/password}" th:object="${passwordChangeForm}" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="currentPassword" th:text="#{field.password.current}">Trenutna lozinka</label>
+                            <input class="form-control" id="currentPassword" type="password" th:field="*{currentPassword}"
+                                   th:errorclass="is-invalid" autocomplete="current-password">
+                            <div class="invalid-feedback" th:errors="*{currentPassword}">Greška</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="newPassword" th:text="#{field.password.new}">Nova lozinka</label>
+                            <input class="form-control" id="newPassword" type="password" th:field="*{newPassword}"
+                                   th:errorclass="is-invalid" autocomplete="new-password">
+                            <div class="invalid-feedback" th:errors="*{newPassword}">Greška</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="confirmPassword" th:text="#{field.password.confirm}">Potvrda lozinke</label>
+                            <input class="form-control" id="confirmPassword" type="password" th:field="*{confirmPassword}"
+                                   th:errorclass="is-invalid" autocomplete="new-password">
+                            <div class="invalid-feedback" th:errors="*{confirmPassword}">Greška</div>
+                        </div>
+                        <button class="btn btn-outline-primary" type="submit" th:text="#{profile.password.submit}">Promeni lozinku</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

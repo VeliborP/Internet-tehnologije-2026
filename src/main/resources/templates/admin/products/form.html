@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.products.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3"
+        th:text="${productForm.id == null} ? #{admin.products.new} : #{admin.products.edit}">Proizvod</h1>
+    <div th:replace="~{fragments/layout :: adminNav('products')}"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" th:object="${productForm}" novalidate
+                  th:action="${productForm.id == null} ? @{/admin/products} : @{/admin/products/{id}(id=${productForm.id})}">
+                <div class="alert alert-danger" th:if="${#fields.hasGlobalErrors()}">
+                    <div th:each="error : ${#fields.globalErrors()}" th:text="${error}">Greška</div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="code" th:text="#{product.code}">Šifra</label>
+                        <input class="form-control" id="code" type="text" th:field="*{code}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{code}">Greška</div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label" for="name" th:text="#{field.name}">Naziv</label>
+                        <input class="form-control" id="name" type="text" th:field="*{name}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{name}">Greška</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="description" th:text="#{field.description}">Opis</label>
+                        <textarea class="form-control" id="description" rows="4" th:field="*{description}"
+                                  th:errorclass="is-invalid"></textarea>
+                        <div class="invalid-feedback" th:errors="*{description}">Greška</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="categoryId" th:text="#{field.category}">Kategorija</label>
+                        <select class="form-select" id="categoryId" th:field="*{categoryId}" th:errorclass="is-invalid">
+                            <option value="" th:text="#{common.choose}">Izaberite</option>
+                            <option th:each="category : ${categories}" th:value="${category.id}"
+                                    th:text="${category.name}">Kategorija</option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{categoryId}">Greška</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="price" th:text="#{field.price.currency}">Cena (RSD)</label>
+                        <input class="form-control" id="price" type="number" step="0.01" min="0" th:field="*{price}"
+                               th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{price}">Greška</div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="stockQuantity" th:text="#{field.stock}">Zalihe</label>
+                        <input class="form-control" id="stockQuantity" type="number" step="1" min="0"
+                               th:field="*{stockQuantity}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{stockQuantity}">Greška</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" for="imageFile" th:text="#{field.image.upload}">Otpremi sliku</label>
+                        <input class="form-control" id="imageFile" type="file" name="imageFile"
+                               accept="image/jpeg,image/png,image/gif,image/webp">
+                        <div class="form-text" th:text="#{field.image.upload.hint}">JPG, PNG, GIF ili WebP, najviše 2 MB.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="image" th:text="#{field.image.url}">Putanja ili URL slike</label>
+                        <input class="form-control" id="image" type="text" th:field="*{image}" th:errorclass="is-invalid"
+                               placeholder="https://...">
+                        <div class="invalid-feedback" th:errors="*{image}">Greška</div>
+                        <div class="form-text" th:text="#{field.image.url.hint}">Ostavite prazno za podrazumevanu sliku.</div>
+                    </div>
+                    <div class="col-12" th:unless="${#strings.isEmpty(productForm.image)}">
+                        <img class="admin-preview" th:src="@{${productForm.image}}" th:alt="#{field.image}">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" id="active" type="checkbox" th:field="*{active}">
+                            <label class="form-check-label" for="active" th:text="#{field.active.product}">Proizvod je aktivan</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" id="featured" type="checkbox" th:field="*{featured}">
+                            <label class="form-check-label" for="featured" th:text="#{field.featured}">Izdvojen na početnoj strani</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit" th:text="#{common.save}">Sačuvaj</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/products}" th:text="#{common.cancel}">Otkaži</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

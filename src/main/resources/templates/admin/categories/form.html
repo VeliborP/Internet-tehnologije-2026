@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.categories.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3"
+        th:text="${categoryForm.id == null} ? #{admin.categories.new} : #{admin.categories.edit}">Kategorija</h1>
+    <div th:replace="~{fragments/layout :: adminNav('categories')}"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" th:object="${categoryForm}" novalidate
+                  th:action="${categoryForm.id == null} ? @{/admin/categories} : @{/admin/categories/{id}(id=${categoryForm.id})}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="code" th:text="#{product.code}">Šifra</label>
+                        <input class="form-control" id="code" type="text" th:field="*{code}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{code}">Greška</div>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label" for="name" th:text="#{field.name}">Naziv</label>
+                        <input class="form-control" id="name" type="text" th:field="*{name}" th:errorclass="is-invalid">
+                        <div class="invalid-feedback" th:errors="*{name}">Greška</div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="description" th:text="#{field.description}">Opis</label>
+                        <textarea class="form-control" id="description" rows="3" th:field="*{description}"
+                                  th:errorclass="is-invalid"></textarea>
+                        <div class="invalid-feedback" th:errors="*{description}">Greška</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" id="active" type="checkbox" th:field="*{active}">
+                            <label class="form-check-label" for="active" th:text="#{field.active.category}">Kategorija je aktivna</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-primary" type="submit" th:text="#{common.save}">Sačuvaj</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/categories}" th:text="#{common.cancel}">Otkaži</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

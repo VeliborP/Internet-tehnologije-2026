@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Elektronika">
+  <rect width="400" height="300" fill="#dfe9f7"/>
+  <circle cx="330" cy="50" r="90" fill="#c9daf2"/>
+  <g fill="none" stroke="#1d4e89" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M130 170v-20a70 70 0 0 1 140 0v20"/>
+    <rect x="112" y="165" width="36" height="60" rx="14" fill="#1d4e89"/>
+    <rect x="252" y="165" width="36" height="60" rx="14" fill="#1d4e89"/>
+  </g>
+</svg>

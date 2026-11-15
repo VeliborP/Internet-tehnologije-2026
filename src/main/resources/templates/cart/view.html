@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{cart.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-4" th:text="#{cart.heading}">Vaša korpa</h1>
+
+    <div class="empty-state" th:if="${cart.empty}">
+        <i class="bi bi-cart-x"></i>
+        <p th:text="#{cart.empty}">Vaša korpa je prazna.</p>
+        <a class="btn btn-primary" th:href="@{/products}" th:text="#{cart.continue.shopping}">Nastavi kupovinu</a>
+    </div>
+
+    <div class="row g-4" th:unless="${cart.empty}">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0 cart-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" th:text="#{cart.column.product}">Proizvod</th>
+                            <th scope="col" class="text-end" th:text="#{cart.column.price}">Cena</th>
+                            <th scope="col" th:text="#{cart.column.quantity}">Količina</th>
+                            <th scope="col" class="text-end" th:text="#{cart.column.total}">Ukupno</th>
+                            <th scope="col"><span class="visually-hidden" th:text="#{common.actions}">Akcije</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${cart.items}">
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img class="cart-thumb" th:src="@{${item.imageUrl}}" th:alt="${item.productName}">
+                                    <div>
+                                        <a class="fw-semibold text-decoration-none"
+                                           th:href="@{/products/{id}(id=${item.productId})}"
+                                           th:text="${item.productName}">Proizvod</a>
+                                        <div class="small text-muted" th:text="${item.productCode}">ABC-001</div>
+                                        <div class="small text-danger" th:if="${item.quantity > item.availableStock}"
+                                             th:text="#{cart.item.stock.warning(${item.availableStock})}">Dostupno samo 2 kom.</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <span th:replace="~{fragments/components :: price(${item.unitPrice})}"></span>
+                            </td>
+                            <td>
+                                <form class="d-flex gap-2 cart-quantity-form" method="post"
+                                      th:action="@{/cart/items/{id}/update(id=${item.id})}">
+                                    <input class="form-control form-control-sm" type="number" name="quantity" min="1"
+                                           th:max="${item.availableStock}" th:value="${item.quantity}" required
+                                           th:aria-label="#{cart.column.quantity}">
+                                    <button class="btn btn-sm btn-outline-primary" type="submit"
+                                            th:title="#{cart.update}" th:aria-label="#{cart.update}">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end fw-semibold">
+                                <span th:replace="~{fragments/components :: price(${item.lineTotal})}"></span>
+                            </td>
+                            <td class="text-end">
+                                <form method="post" th:action="@{/cart/items/{id}/remove(id=${item.id})}">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit"
+                                            th:title="#{cart.remove}" th:aria-label="#{cart.remove}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <a class="btn btn-link mt-3 ps-0" th:href="@{/products}">
+                <i class="bi bi-arrow-left"></i> <span th:text="#{cart.continue.shopping}">Nastavi kupovinu</span>
+            </a>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card summary-card">
+                <div class="card-body">
+                    <h2 class="h5" th:text="#{cart.summary}">Pregled</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-6 fw-normal" th:text="#{cart.total.quantity}">Broj artikala</dt>
+                        <dd class="col-6 text-end" th:text="${cart.totalQuantity}">3</dd>
+                        <dt class="col-6 fs-5" th:text="#{cart.total.amount}">Ukupno</dt>
+                        <dd class="col-6 text-end fs-5 fw-bold">
+                            <span th:replace="~{fragments/components :: price(${cart.totalAmount})}"></span>
+                        </dd>
+                    </dl>
+                    <a class="btn btn-primary btn-lg w-100 mt-3" th:href="@{/checkout}">
+                        <span th:text="#{cart.checkout}">Nastavi na kupovinu</span> <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{login.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div th:replace="~{fragments/layout :: alerts}"></div>
+            <div class="alert alert-danger" role="alert" th:if="${param.error}" th:text="#{login.error}">
+                Pogrešno korisničko ime ili lozinka.
+            </div>
+
+            <div class="card auth-card">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4" th:text="#{login.heading}">Prijava</h1>
+                    <form method="post" th:action="@{/login}">
+                        <div class="mb-3">
+                            <label class="form-label" for="username" th:text="#{field.username}">Korisničko ime</label>
+                            <input class="form-control" id="username" type="text" name="username"
+                                   autocomplete="username" required autofocus>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="password" th:text="#{field.password}">Lozinka</label>
+                            <input class="form-control" id="password" type="password" name="password"
+                                   autocomplete="current-password" required>
+                        </div>
+                        <button class="btn btn-primary w-100" type="submit" th:text="#{login.submit}">Prijavi se</button>
+                    </form>
+                    <p class="text-center mt-4 mb-0">
+                        <span th:text="#{login.no.account}">Nemate nalog?</span>
+                        <a th:href="@{/register}" th:text="#{login.register.link}">Registrujte se</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

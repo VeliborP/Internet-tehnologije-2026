@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{error.403.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-5 flex-grow-1">
+    <div class="empty-state">
+        <span class="error-code">403</span>
+        <h1 class="h3" th:text="#{error.403.heading}">Pristup nije dozvoljen</h1>
+        <p th:text="#{error.403.text}">Nemate ovlašćenje za pristup ovoj stranici.</p>
+        <a class="btn btn-primary" th:href="@{/}" th:text="#{error.back.home}">Nazad na početnu</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

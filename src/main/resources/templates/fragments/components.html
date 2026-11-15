@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Price formatted as 1.234,56 RSD -->
+<span th:fragment="price(value)" class="text-nowrap"
+      th:text="${#numbers.formatDecimal(value, 1, 'POINT', 2, 'COMMA')} + ' ' + #{common.currency}">0,00 RSD</span>
+
+<!-- Order status badge -->
+<span th:fragment="statusBadge(status)" class="badge status-badge" th:classappend="'status-' + ${status}"
+      th:text="#{${'order.status.' + status}}">Status</span>
+
+<!-- Product card used on the home page and in the catalog -->
+<div th:fragment="productCard(product)" class="card product-card h-100">
+    <a class="product-card-image" th:href="@{/products/{id}(id=${product.id})}">
+        <img th:src="@{${product.imageUrl}}" th:alt="${product.name}" loading="lazy">
+        <span class="badge badge-featured" th:if="${product.featured}" th:text="#{product.featured}">Izdvojeno</span>
+    </a>
+    <div class="card-body d-flex flex-column">
+        <span class="product-category" th:text="${product.categoryName}">Kategorija</span>
+        <h3 class="h6 card-title mb-1">
+            <a class="stretched-link-title" th:href="@{/products/{id}(id=${product.id})}"
+               th:text="${product.name}">Naziv proizvoda</a>
+        </h3>
+        <p class="card-text small text-muted flex-grow-1" th:text="${product.shortDescription}">Kratak opis.</p>
+        <div class="d-flex justify-content-between align-items-end mt-2">
+            <span class="product-price"><span th:replace="~{fragments/components :: price(${product.price})}"></span></span>
+            <span class="small text-success" th:if="${product.inStock and !product.lowStock}">
+                <i class="bi bi-check2-circle"></i> <span th:text="#{product.in.stock}">Na stanju</span>
+            </span>
+            <span class="small text-warning-emphasis" th:if="${product.lowStock}"
+                  th:text="#{product.low.stock(${product.stockQuantity})}">Još samo 3 kom.</span>
+            <span class="small text-danger" th:unless="${product.inStock}">
+                <i class="bi bi-x-circle"></i> <span th:text="#{product.out.of.stock}">Nema na stanju</span>
+            </span>
+        </div>
+    </div>
+    <div class="card-footer bg-transparent border-0 pt-0 pb-3">
+        <form method="post" th:action="@{/cart/add}" sec:authorize="isAuthenticated()" th:if="${product.inStock}">
+            <input type="hidden" name="productId" th:value="${product.id}">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn btn-primary w-100" type="submit">
+                <i class="bi bi-cart-plus"></i> <span th:text="#{product.add.to.cart}">Dodaj u korpu</span>
+            </button>
+        </form>
+        <a class="btn btn-outline-primary w-100" sec:authorize="isAnonymous()" th:if="${product.inStock}"
+           th:href="@{/login}" th:text="#{product.login.to.buy}">Prijavite se za kupovinu</a>
+        <button class="btn btn-outline-secondary w-100" type="button" disabled th:unless="${product.inStock}"
+                th:text="#{product.out.of.stock}">Nema na stanju</button>
+    </div>
+</div>
+
+<!--
+  Pagination. Usage: pagination(${page}, '/products')
+  Keeps the standard filter parameters (q, categoryId, status, userId, username) that controllers put in the model.
+-->
+<nav th:fragment="pagination(page, path)" th:if="${page.totalPages > 1}" class="mt-4" th:aria-label="#{pagination.label}"
+     th:with="first=${page.number > 2 ? page.number - 2 : 0},
+              last=${page.number + 2 lt page.totalPages - 1 ? page.number + 2 : page.totalPages - 1}">
+    <ul class="pagination justify-content-center flex-wrap">
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{${path}(page=${page.number - 1}, q=${q}, categoryId=${categoryId}, status=${status}, userId=${userId}, username=${username})}"
+               th:text="#{pagination.previous}">Prethodna</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(first, last)}"
+            th:classappend="${i == page.number} ? 'active'">
+            <a class="page-link"
+               th:href="@{${path}(page=${i}, q=${q}, categoryId=${categoryId}, status=${status}, userId=${userId}, username=${username})}"
+               th:text="${i + 1}">1</a>
+        </li>
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{${path}(page=${page.number + 1}, q=${q}, categoryId=${categoryId}, status=${status}, userId=${userId}, username=${username})}"
+               th:text="#{pagination.next}">Sledeća</a>
+        </li>
+    </ul>
+    <p class="text-center text-muted small mb-0"
+       th:text="#{pagination.summary(${page.number + 1}, ${page.totalPages}, ${page.totalElements})}">Strana 1 od 3</p>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Kuća i bašta">
+  <rect width="400" height="300" fill="#e3f1e8"/>
+  <circle cx="340" cy="250" r="90" fill="#cfe6d8"/>
+  <g stroke="#14213d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M120 150l80-70 80 70" fill="none"/>
+    <path d="M140 140v90h120v-90" fill="#ffffff"/>
+    <rect x="184" y="175" width="32" height="55" fill="#f4a259"/>
+    <path d="M300 230v-40" fill="none"/>
+    <path d="M300 195c-22-4-28-22-24-40 20 2 30 16 24 40z M300 205c20-6 30-20 26-38-18 2-30 14-26 38z" fill="#81b29a"/>
+  </g>
+</svg>

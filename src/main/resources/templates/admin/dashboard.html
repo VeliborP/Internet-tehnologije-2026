@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.dashboard.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="#{admin.dashboard.heading}">Administracija</h1>
+    <div th:replace="~{fragments/layout :: adminNav('dashboard')}"></div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <a class="stat-card" th:href="@{/admin/products}">
+                <i class="bi bi-box-seam"></i>
+                <span class="stat-value" th:text="${productCount}">0</span>
+                <span class="stat-label" th:text="#{admin.stat.products}">Proizvoda</span>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="stat-card" th:href="@{/admin/categories}">
+                <i class="bi bi-tags"></i>
+                <span class="stat-value" th:text="${categoryCount}">0</span>
+                <span class="stat-label" th:text="#{admin.stat.categories}">Kategorija</span>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="stat-card" th:href="@{/admin/users}">
+                <i class="bi bi-people"></i>
+                <span class="stat-value" th:text="${userCount}">0</span>
+                <span class="stat-label" th:text="#{admin.stat.users}">Korisnika</span>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a class="stat-card" th:href="@{/admin/orders}">
+                <i class="bi bi-receipt"></i>
+                <span class="stat-value" th:text="${orderCount}">0</span>
+                <span class="stat-label" th:text="#{admin.stat.orders}">Porudžbina</span>
+            </a>
+        </div>
+        <div class="col-sm-6">
+            <a class="stat-card stat-card-accent" th:href="@{/admin/orders(status='PENDING')}">
+                <i class="bi bi-hourglass-split"></i>
+                <span class="stat-value" th:text="${pendingOrderCount}">0</span>
+                <span class="stat-label" th:text="#{admin.stat.pending}">Porudžbina na čekanju</span>
+            </a>
+        </div>
+        <div class="col-sm-6">
+            <div class="stat-card">
+                <i class="bi bi-cash-stack"></i>
+                <span class="stat-value"><span th:replace="~{fragments/components :: price(${revenue})}"></span></span>
+                <span class="stat-label" th:text="#{admin.stat.revenue}">Ukupan promet</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header bg-transparent fw-semibold" th:text="#{admin.recent.orders}">Poslednje porudžbine</div>
+                <p class="text-muted p-3 mb-0" th:if="${#lists.isEmpty(recentOrders)}" th:text="#{admin.orders.empty}">Nema porudžbina.</p>
+                <div class="table-responsive" th:unless="${#lists.isEmpty(recentOrders)}">
+                    <table class="table table-hover align-middle mb-0">
+                        <tbody>
+                        <tr th:each="order : ${recentOrders}">
+                            <td>
+                                <a class="fw-semibold text-decoration-none" th:href="@{/admin/orders/{id}(id=${order.id})}"
+                                   th:text="${order.orderNumber}">ORD-1</a>
+                                <div class="small text-muted" th:text="${order.customerName}">Kupac</div>
+                            </td>
+                            <td><span th:replace="~{fragments/components :: statusBadge(${order.status})}"></span></td>
+                            <td class="text-end"><span th:replace="~{fragments/components :: price(${order.totalAmount})}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-header bg-transparent fw-semibold" th:text="#{admin.low.stock}">Niske zalihe</div>
+                <p class="text-muted p-3 mb-0" th:if="${#lists.isEmpty(lowStockProducts)}" th:text="#{admin.low.stock.empty}">Sve je na stanju.</p>
+                <ul class="list-group list-group-flush" th:unless="${#lists.isEmpty(lowStockProducts)}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="item : ${lowStockProducts}">
+                        <a class="text-decoration-none" th:href="@{/admin/products/{id}/edit(id=${item.id})}"
+                           th:text="${item.name}">Proizvod</a>
+                        <span class="badge" th:classappend="${item.inStock} ? 'text-bg-warning' : 'text-bg-danger'"
+                              th:text="${item.stockQuantity}">0</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

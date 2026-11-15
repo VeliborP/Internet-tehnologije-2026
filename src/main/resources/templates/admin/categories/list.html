@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.categories.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="#{admin.categories.heading}">Kategorije</h1>
+    <div th:replace="~{fragments/layout :: adminNav('categories')}"></div>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-primary" th:href="@{/admin/categories/new}">
+            <i class="bi bi-plus-lg"></i> <span th:text="#{admin.categories.new}">Nova kategorija</span>
+        </a>
+    </div>
+
+    <div class="card">
+        <p class="text-muted p-3 mb-0" th:if="${#lists.isEmpty(categories)}" th:text="#{admin.categories.empty}">Nema kategorija.</p>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(categories)}">
+            <table class="table table-hover align-middle mb-0 admin-table">
+                <thead>
+                <tr>
+                    <th scope="col" th:text="#{product.code}">Šifra</th>
+                    <th scope="col" th:text="#{field.name}">Naziv</th>
+                    <th scope="col" th:text="#{field.description}">Opis</th>
+                    <th scope="col" class="text-end" th:text="#{admin.categories.products}">Proizvoda</th>
+                    <th scope="col" th:text="#{field.status}">Status</th>
+                    <th scope="col" class="text-end" th:text="#{common.actions}">Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="category : ${categories}">
+                    <td class="text-muted" th:text="${category.code}">ABC</td>
+                    <td class="fw-semibold" th:text="${category.name}">Kategorija</td>
+                    <td class="small" th:text="${category.description}">Opis</td>
+                    <td class="text-end">
+                        <a th:href="@{/admin/products(categoryId=${category.id})}" th:title="#{admin.categories.view.products}"
+                           th:text="${category.productCount}">0</a>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${category.active} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${category.active} ? #{common.active} : #{common.inactive}">Aktivna</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/categories/{id}/edit(id=${category.id})}"
+                           th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                        <form class="d-inline" method="post" th:action="@{/admin/categories/{id}/toggle(id=${category.id})}">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"
+                                    th:title="${category.active} ? #{common.deactivate} : #{common.activate}"
+                                    th:aria-label="${category.active} ? #{common.deactivate} : #{common.activate}">
+                                <i class="bi" th:classappend="${category.active} ? 'bi-eye-slash' : 'bi-eye'"></i>
+                            </button>
+                        </form>
+                        <form class="d-inline" method="post" th:action="@{/admin/categories/{id}/delete(id=${category.id})}"
+                              th:data-confirm="#{admin.category.delete.confirm(${category.name})}">
+                            <button class="btn btn-sm btn-outline-danger" type="submit"
+                                    th:title="#{common.delete}" th:aria-label="#{common.delete}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

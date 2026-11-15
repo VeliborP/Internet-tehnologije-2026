@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(#{admin.users.title})}"></head>
+<body class="d-flex flex-column min-vh-100">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+    <h1 class="h3 mb-3" th:text="#{admin.users.heading}">Korisnici</h1>
+    <div th:replace="~{fragments/layout :: adminNav('users')}"></div>
+
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+        <form class="row g-2 flex-grow-1" method="get" th:action="@{/admin/users}">
+            <div class="col-sm-6 col-lg-4">
+                <input class="form-control" type="search" name="q" th:value="${q}"
+                       th:placeholder="#{admin.users.search}" th:aria-label="#{admin.users.search}">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="bi bi-search"></i> <span th:text="#{nav.search}">Pretraži</span>
+                </button>
+            </div>
+        </form>
+        <a class="btn btn-primary align-self-start" th:href="@{/admin/users/new}">
+            <i class="bi bi-person-plus"></i> <span th:text="#{admin.users.new}">Novi korisnik</span>
+        </a>
+    </div>
+
+    <div class="card">
+        <p class="text-muted p-3 mb-0" th:if="${page.empty}" th:text="#{admin.users.empty}">Nema korisnika.</p>
+        <div class="table-responsive" th:unless="${page.empty}">
+            <table class="table table-hover align-middle mb-0 admin-table">
+                <thead>
+                <tr>
+                    <th scope="col" th:text="#{field.username}">Korisničko ime</th>
+                    <th scope="col" th:text="#{field.full.name}">Ime i prezime</th>
+                    <th scope="col" th:text="#{field.role}">Uloga</th>
+                    <th scope="col" th:text="#{field.status}">Status</th>
+                    <th scope="col" class="text-end" th:text="#{common.actions}">Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${page.content}">
+                    <td class="fw-semibold" th:text="${item.username}">korisnik</td>
+                    <td th:text="${item.fullName}">Ime Prezime</td>
+                    <td>
+                        <span class="badge" th:classappend="${item.role.name() == 'ADMIN'} ? 'text-bg-dark' : 'text-bg-light border'"
+                              th:text="#{${'role.' + item.role}}">Kupac</span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${item.enabled} ? 'text-bg-success' : 'text-bg-secondary'"
+                              th:text="${item.enabled} ? #{common.active} : #{common.inactive}">Aktivan</span>
+                    </td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/orders(userId=${item.id})}"
+                           th:title="#{admin.users.orders}" th:aria-label="#{admin.users.orders}"><i class="bi bi-receipt"></i></a>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/users/{id}/edit(id=${item.id})}"
+                           th:title="#{common.edit}" th:aria-label="#{common.edit}"><i class="bi bi-pencil"></i></a>
+                        <form class="d-inline" method="post" th:action="@{/admin/users/{id}/toggle(id=${item.id})}">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"
+                                    th:title="${item.enabled} ? #{common.deactivate} : #{common.activate}"
+                                    th:aria-label="${item.enabled} ? #{common.deactivate} : #{common.activate}">
+                                <i class="bi" th:classappend="${item.enabled} ? 'bi-person-slash' : 'bi-person-check'"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/components :: pagination(${page}, '/admin/users')}"></nav>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

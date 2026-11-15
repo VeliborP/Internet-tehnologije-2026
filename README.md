@@ -1,4 +1,4 @@
-# Dućan – Web Shop (Spring Boot + Thymeleaf + MySQL)
+# Prodavnica – Web Shop (Spring Boot + Thymeleaf + MySQL)
 
 Klasična server-side rendered (SSR) web prodavnica: katalog proizvoda, korpa, kreiranje
 porudžbina, korisnički nalozi i administrativni deo.

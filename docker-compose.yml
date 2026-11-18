@@ -1,6 +1,17 @@
 # Optional helper: starts a local MySQL instance for development.
 # Usage: docker compose up -d
 services:
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: webshop-phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+
   mysql:
     image: mysql:8.4
     container_name: webshop-mysql
